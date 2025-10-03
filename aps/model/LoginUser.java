@@ -1,4 +1,4 @@
-package model;
+package projeto.aps.model;
 
 public class LoginUser {
     

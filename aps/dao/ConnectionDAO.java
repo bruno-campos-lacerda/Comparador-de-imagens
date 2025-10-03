@@ -1,4 +1,4 @@
-package dao;
+package projeto.aps.dao;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;

@@ -1,6 +1,8 @@
-package dao;
+package projeto.aps.dao;
 
-import model.LoginUser;
+
+import projeto.aps.model.LoginUser;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
