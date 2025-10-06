@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 public class ConnectionDAO {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/loginuser";
+    private static final String URL = "jdbc:mysql://localhost:3306/loginuser?useSSL=false&serverTimezone=UTC";
     private static final String USER = "root";
     private static final String PASSWORD = "1618f17LLP*";
 
