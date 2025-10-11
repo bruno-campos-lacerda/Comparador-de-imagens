@@ -1,4 +1,4 @@
-package model;
+package ComparadorDeImagens.model;
 
 public class LoginUser {
     
