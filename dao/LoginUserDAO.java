@@ -1,6 +1,6 @@
-package dao;
+package ComparadorDeImagens.dao;
 
-import model.LoginUser;
+import ComparadorDeImagens.model.LoginUser;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

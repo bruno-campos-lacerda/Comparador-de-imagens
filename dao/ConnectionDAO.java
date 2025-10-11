@@ -1,4 +1,4 @@
-package dao;
+package ComparadorDeImagens.dao;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
