@@ -4,9 +4,11 @@
  */
 package ComparadorDeImagens.service;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.*;
 import java.net.http.*;
+import org.json.*;
+import javax.swing.JOptionPane;
 //import javax.swing.*;
 
 /**
@@ -15,47 +17,39 @@ import java.net.http.*;
  */
 public class GetImages {
     public static void main(String[] args) {
+        String apiUrl = "https://data.inpe.br/bdc/stac/v1/search?collections=LCC_L8_30_1M_STK_Cerrado-1&limit=10000";
+            
+        //client é a conexão com a api
+        HttpClient client = HttpClient.newBuilder().build();
+
+        //request é a construção da requisicao, o pedido que será feito
+        //.header("Accept", "application/Json") é o formato em que queremos que seja retornado, no caso .JSON
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).GET().header("Accept", "application/Json").build();
+        
         try {
-            String apiUrl = "https://data.inpe.br/bdc/stac/v1/search";
-
-            // Corpo JSON do POST
-            String jsonInputString = """
-                {
-                    "collections": ["LCC_L8_30_1M_STK_Cerrado-1"],
-                    "limit": 10
-                }
-            """;
-
-            // Conexão
-            URL url = new URL(apiUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setDoOutput(true);
-
-            // Enviar o JSON
-            try (OutputStream os = conn.getOutputStream()) {
-                byte[] input = jsonInputString.getBytes("utf-8");
-                os.write(input, 0, input.length);
+            //response se trata do retorno da requisicao
+            //a conexao client envia a requisicao request, que deve ser retornada como String
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.body());
+            
+            JSONObject jsonResponse = new JSONObject(response.body());
+            JSONArray features = jsonResponse.getJSONArray("features");
+            
+            System.out.println("datetime nos itens disponiveis:\n");
+            
+            for(int i = 0; i < features.length(); i++){
+                JSONObject feature = features.getJSONObject(i);
+                JSONObject properties = feature.getJSONObject("properties");
+                
+                String datetime = properties.getString("datetime");
+                System.out.println("Item " + (i + 1) + " -> datetime: " + datetime);
             }
-
-            // Ler resposta
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream(), "utf-8"))) {
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    response.append(line.trim());
-                }
-
-                // Imprimir o JSON completo
-                System.out.println(response.toString());
-            }
-
-            conn.disconnect();
-
-        } catch (Exception e) {
+            
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+        } catch (JSONException je) {
+            System.out.println("Erro ao processar JSON: " + je.getMessage());
         }
+
     }
 }
