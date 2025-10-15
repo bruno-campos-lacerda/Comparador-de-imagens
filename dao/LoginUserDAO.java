@@ -8,37 +8,37 @@ import java.sql.SQLException;
 
 public class LoginUserDAO {
 
-    private static Connection connection;
-
-    public LoginUserDAO(Connection connection) {
-    this.connection = connection;
-    }
-
-
     public void create(LoginUser user) {
-    String sql = "INSERT INTO usuarios (username, password) VALUES (?, ?)";
+        String sql = "INSERT INTO userpassword (user, password) VALUES (?, ?)";
 
-    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setString(1, user.getUsername());
-        stmt.setString(2, user.getPassword());
-        stmt.executeUpdate();
-        System.out.println("Usuário cadastrado com sucesso!");
-    } catch (SQLException e) {
-        System.err.println("Erro ao cadastrar usuário: " + e.getMessage());
+        try (Connection connection = ConnectionDAO.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPassword());
+            stmt.executeUpdate();
+
+            System.out.println("Usuário cadastrado com sucesso!");
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao cadastrar usuário: " + e.getMessage());
+        }
     }
-}
-
 
     // Validar login
-    public static boolean login(String username, String password) {
-        String sql = "SELECT * FROM userpassword WHERE username = ? AND password = ?";
+    public boolean login(String username, String password) {
+        
+        String sql = "SELECT * FROM userpassword WHERE User = ? AND Password = ?";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (Connection connection = ConnectionDAO.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
             stmt.setString(1, username);
             stmt.setString(2, password);
 
             ResultSet rs = stmt.executeQuery();
-            return rs.next(); // true se encontrou
+            return rs.next();
+
         } catch (SQLException e) {
             System.out.println("Erro ao autenticar: " + e.getMessage());
             return false;
