@@ -35,15 +35,34 @@ public class GetImages {
             JSONObject jsonResponse = new JSONObject(response.body());
             JSONArray features = jsonResponse.getJSONArray("features");
             
+            
             System.out.println("datetime nos itens disponiveis:\n");
             
-            for(int i = 0; i < features.length(); i++){
-                JSONObject feature = features.getJSONObject(i);
-                JSONObject properties = feature.getJSONObject("properties");
-                
-                String datetime = properties.getString("datetime");
-                System.out.println("Item " + (i + 1) + " -> datetime: " + datetime);
+            int i = 0;
+            while(i <= 10000){
+                for(int j = 0; j < features.length(); j++){
+                    JSONObject feature = features.getJSONObject(j);
+                    String id = feature.getString("id");
+                    
+                    JSONObject dateProperties = feature.getJSONObject("properties");
+                    String datetime = dateProperties.getString("datetime");
+                    
+                    //JSONObject coordinatesProperties = feature.getJSONObject("geometry");
+                    //JSONArray coordinatesArray = coordinatesProperties.getJSONArray("coordinates");
+                    JSONArray bboxFeatures = feature.getJSONArray("bbox");
+                    String coordinates = bboxFeatures.toString();
+                    /*for(int k = 0; k < coordinatesArray.length(); k++){
+                        JSONObject coord = coordinatesArray.getJSONObject(k);
+                        coordinates += coord.getString();
+                    }*/
+                    
+                    System.out.println("Item " + (i + 1) + "\n" + "-> datetime: " + datetime + "\n"
+                                                                + "-> id: " + id + "\n"
+                                                                + "-> coordinates" + coordinates);
+                    i++;
+                }
             }
+            
             
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
