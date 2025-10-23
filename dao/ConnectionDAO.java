@@ -12,15 +12,40 @@ public class ConnectionDAO {
 
     // Dados da conexão
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver"; // use o driver atualizado
-    private static final String URL = "jdbc:mysql://localhost:3306/loginuser?useSSL=false&serverTimezone=UTC";
+    
+    private static final String URLLoggin = "jdbc:mysql://localhost:3306/loginuser?useSSL=false&serverTimezone=UTC";
+    private static final String URLImage = "jdbc:mysql://localhost:3306/images?useSSL=false&serverTimezone=UTC";
+    
     private static final String USER = "root";
     private static final String PASS = "2131";
 
-    // Método de conexão
-    public static Connection getConnection() {
+    // Método de conexão loggin
+    public static Connection getLogginConnection() {
+//        try {
+//            Class.forName(DRIVER);
+//            return DriverManager.getConnection(URLLoggin, USER, PASS);
+//        } catch (ClassNotFoundException | SQLException ex) {
+//            throw new RuntimeException("Erro na conexão: ", ex);
+//        }
+        return getConnection(URLLoggin);
+    }
+    
+    // Método de conexão image
+    public static Connection getImageConnection() {
+//        try {
+//            Class.forName(DRIVER);
+//            return DriverManager.getConnection(URLImage, USER, PASS);
+//        } catch (ClassNotFoundException | SQLException ex) {
+//            throw new RuntimeException("Erro na conexão: ", ex);
+//        }
+        return getConnection(URLImage);
+    }
+    
+    // Método de conexão principal
+    private static Connection getConnection(String url){
         try {
             Class.forName(DRIVER);
-            return DriverManager.getConnection(URL, USER, PASS);
+            return DriverManager.getConnection(url, USER, PASS);
         } catch (ClassNotFoundException | SQLException ex) {
             throw new RuntimeException("Erro na conexão: ", ex);
         }
