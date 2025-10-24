@@ -153,38 +153,7 @@ public class RegisterLogin extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
        
-         // Cria objetos necessários
-    LoginUserDAO dao = new LoginUserDAO();
-    LoginUser login = new LoginUser();
-
-    // Captura os valores dos campos
-    String usuario = jTextField1.getText().trim();
-    char[] senhaArray = jPasswordField1.getPassword();
-    String senha = new String(senhaArray);
-
-    // Verifica se os campos estão preenchidos
-    if (usuario.isEmpty() || senha.isEmpty()) {
-        JOptionPane.showMessageDialog(null, "Preencha todos os campos!", "Atenção", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    // Define no model
-    login.setUsername(usuario);
-    login.setPassword(senha);
-
-    // Salva no banco
-    dao.create(login);
-
-    JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
-
-    // Limpa os campos (opcional)
-    jTextField1.setText("");
-    jPasswordField1.setText("");
-
-    // Abre a próxima tela
-    Register register = new Register();
-    register.setVisible(true);
-    this.dispose();
+     
         
     }//GEN-LAST:event_jButton2ActionPerformed
     public static void main(String args[]) {
