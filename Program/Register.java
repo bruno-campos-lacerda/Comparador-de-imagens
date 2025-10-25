@@ -228,8 +228,8 @@ public class Register extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-          
-        RegisterLogin register = new RegisterLogin ();
+
+        RegisterLogin register = new RegisterLogin();
         register.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
