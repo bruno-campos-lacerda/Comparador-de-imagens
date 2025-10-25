@@ -5,14 +5,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.JOptionPane;
 
 public class LoginUserDAO {
 
     public void create(LoginUser user) {
         String sql = "INSERT INTO userpassword (user, password) VALUES (?, ?)";
 
-        try (Connection connection = ConnectionDAO.getConnection();
+        try (Connection connection = ConnectionDAO.getLogginConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             stmt.setString(1, user.getUsername());
@@ -31,7 +30,7 @@ public class LoginUserDAO {
         
         String sql = "SELECT * FROM userpassword WHERE User = ? AND Password = ?";
 
-        try (Connection connection = ConnectionDAO.getConnection();
+        try (Connection connection = ConnectionDAO.getLogginConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             stmt.setString(1, username);
