@@ -4,86 +4,122 @@
  */
 package ComparadorDeImagens.service;
 
+import ComparadorDeImagens.dao.ImagesDAO;
 import java.io.IOException;
-import java.net.*;
-import java.net.http.*;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.sql.Timestamp;
 import java.util.Base64;
-import org.json.*;
-import javax.swing.JOptionPane;
 
 /**
+ * Classe responsável por consumir a API do INPE,
+ * converter o campo datetime para Timestamp
+ * e salvar as imagens PNG no banco de dados.
  *
- * @author brula
+ * @author Pedro
  */
 public class GetImages {
+
     public static void main(String[] args) {
+        // URL da API do INPE
         String apiUrl = "https://data.inpe.br/bdc/stac/v1/search?collections=LCC_L8_30_1M_STK_Cerrado-1&limit=10000";
-            
-        //client é a conexão com a api
+
+        // Cliente HTTP
         HttpClient client = HttpClient.newBuilder().build();
 
-        //request é a construção da requisicao, o pedido que será feito
-        //.header("Accept", "application/Json") é o formato em que queremos que seja retornado, no caso .JSON
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).GET().header("Accept", "application/Json").build();
-        
+        // Requisição GET para a API
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .header("Accept", "application/json")
+                .GET()
+                .build();
+
         try {
-            //response se trata do retorno da requisicao
-            //a conexao client envia a requisicao request, que deve ser retornada como String
+            // Envia a requisição e obtém a resposta JSON
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
-            
-            //JSONObject tranforma em string todos os metadados dentro de {}
-            //JSONOArray tranforma em string todos os metadados dentro de []
+
+            // Converte a resposta em JSON
             JSONObject jsonResponse = new JSONObject(response.body());
             JSONArray features = jsonResponse.getJSONArray("features");
-            
-            System.out.println("datetime nos itens disponiveis:\n");
-            
-            int i = 0;
-            while(i <= 10000){
-                for(int j = 0; j < features.length(); j++){
-                    //feature recebe os metadados dentro de {}, no proximo loop, ele vai para o proximo {}
-                    JSONObject feature = features.getJSONObject(j);
-                    
-                    //dateProperties recebe dentro de feature, o objeto "properties"
-                    //datetime recebe dentro de dateProperties, o objeto "datetime" em formato de String
-                    JSONObject dateProperties = feature.getJSONObject("properties");
-                    String datetime = dateProperties.getString("datetime");
-                    
-                    //assets recebe dentro de feature, o objeto "assets", que contém as imagens
-                    JSONObject assets = feature.optJSONObject("assets");
-                    String image64Preview = "";
-                    
-                    //percorre os objetos dentro de assets
-                    for(String key : assets.keySet()){
-                        JSONObject asset = assets.getJSONObject(key);
-                        
-                        //href e type passam pela funcao optString(texto a ser encontrado, valor padrao caso nao encontrado) e retornam o link da imagem
-                        String href = asset.optString("href", "sem link");
-                        String type = asset.optString("type", "sem tipo");
-                        
-                        //cria uma nova requisicao para para obter as imagens em formato de bytes
-                        HttpRequest imgRequest = HttpRequest.newBuilder().uri(URI.create(href)).build();
+
+            System.out.println("🔍 Iniciando coleta de imagens... Total de itens: " + features.length());
+
+            // Percorre cada item retornado pela API
+            for (int j = 0; j < features.length(); j++) {
+                JSONObject feature = features.getJSONObject(j);
+
+                // Obtém o campo "datetime"
+                JSONObject dateProperties = feature.optJSONObject("properties");
+                if (dateProperties == null) continue;
+
+                String datetime = dateProperties.optString("datetime", null);
+                if (datetime == null) continue;
+
+                // Converte o datetime ISO 8601 → Timestamp (para salvar no banco)
+                Timestamp timestamp;
+                try {
+                    Instant instant = Instant.parse(datetime);
+                    LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+                    timestamp = Timestamp.valueOf(localDateTime);
+                } catch (Exception e) {
+                    System.out.println("❌ Erro ao converter datetime: " + datetime + " → " + e.getMessage());
+                    continue;
+                }
+
+                // Obtém os assets (imagens)
+                JSONObject assets = feature.optJSONObject("assets");
+                if (assets == null) continue;
+
+                // Percorre cada asset e busca o primeiro do tipo image/png
+                for (String key : assets.keySet()) {
+                    JSONObject asset = assets.getJSONObject(key);
+                    String href = asset.optString("href", null);
+                    String type = asset.optString("type", "sem tipo");
+
+                    if (href == null || !type.equals("image/png")) continue;
+
+                    try {
+                        // Faz o download da imagem em bytes
+                        HttpRequest imgRequest = HttpRequest.newBuilder()
+                                .uri(URI.create(href))
+                                .build();
                         HttpResponse<byte[]> imgResponse = client.send(imgRequest, HttpResponse.BodyHandlers.ofByteArray());
                         byte[] imageBytes = imgResponse.body();
-                        
-                        //a String image64Preview recebe imageBytes convertida para String
-                        image64Preview += Base64.getEncoder().encodeToString(imageBytes) + "\n";
-                        if(image64Preview.length() > 200) //limita o numero de caracteres para nao entupir o console
+
+                        // (Opcional) gera uma prévia em Base64 para log
+                        String image64Preview = Base64.getEncoder().encodeToString(imageBytes);
+                        if (image64Preview.length() > 200) {
                             image64Preview = image64Preview.substring(0, 200) + "...";
+                        }
+
+                        // Salva no banco de dados
+                        ImagesDAO dao = new ImagesDAO();
+                        dao.InsertImages(timestamp, imageBytes);
+
+                        System.out.println("✅ Imagem salva (" + timestamp + ") - Tamanho: " + imageBytes.length + " bytes");
+                        break; // salva apenas uma imagem PNG por feature
+
+                    } catch (Exception e) {
+                        System.out.println("⚠️ Erro ao baixar/salvar imagem: " + e.getMessage());
                     }
-                    
-                    System.out.println("===== ITEM " + (i + 1) + " =====" 
-                                        + "\n" + "-> datetime: " + datetime + "\n"
-                                        + "-> image: " + image64Preview + "\n");
-                    i++;
                 }
             }
+
+            System.out.println("\n Processo concluído com sucesso!");
+
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            System.out.println("Erro de conexão: " + e.getMessage());
         } catch (JSONException je) {
             System.out.println("Erro ao processar JSON: " + je.getMessage());
         }
-
     }
 }
