@@ -8,42 +8,56 @@ import ComparadorDeImagens.dao.ImagesDAO;
 import ComparadorDeImagens.dao.ImagesDAO.ImageItem;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.List;
 import javax.imageio.ImageIO;
+
 public class GetImages extends javax.swing.JFrame {
 
-    private List<ImagesDAO.ImageItem> images;
-    
+    private List<ImageItem> images;
+    private DefaultListModel<String> listModel;
+    private int currentIndex = -1;
+
     public GetImages() {
         initComponents();
         loadImagesFromDB();
-        setupComboBoxListener();
+        setupListListener();
         setLocationRelativeTo(null);
     }
-    
-     private void loadImagesFromDB() {
+
+    private void loadImagesFromDB() {
         ImagesDAO dao = new ImagesDAO();
         images = dao.getAllImages();
 
-        jComboBox1.removeAllItems();
+        listModel = new DefaultListModel<>();
+        jList1.setModel(listModel);
+        listModel.clear();
+
         for (ImageItem item : images) {
-            jComboBox1.addItem(item.getTimestamp().toString());
+            listModel.addElement(item.getTimestamp().toString());
         }
     }
-     private void setupComboBoxListener() {
-        jComboBox1.addActionListener(e -> {
-            int index = jComboBox1.getSelectedIndex();
-            if (index >= 0 && index < images.size()) {
-                ImageItem item = images.get(index);
-                try {
-                    ByteArrayInputStream bis = new ByteArrayInputStream(item.getImageBytes());
-                    BufferedImage img = ImageIO.read(bis);
-                    jLabel1.setIcon(new ImageIcon(img.getScaledInstance(
-                        jLabel1.getWidth(), jLabel1.getHeight(), java.awt.Image.SCALE_SMOOTH
-                    )));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+
+    private void setupListListener() {
+        jList1.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int index = jList1.getSelectedIndex();
+                if (index >= 0 && index < images.size()) {
+                    ImageItem item = images.get(index);
+                    try {
+                        File imgFile = new File(item.getPath());
+                        if (!imgFile.exists()) {
+                            System.out.println("Arquivo não encontrado: " + item.getPath());
+                            jLabel1.setIcon(null);
+                            return;
+                        }
+                        BufferedImage img = ImageIO.read(imgFile);
+                        jLabel1.setIcon(new ImageIcon(img.getScaledInstance(
+                                jLabel1.getWidth(), jLabel1.getHeight(), java.awt.Image.SCALE_SMOOTH
+                        )));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
         });
@@ -58,13 +72,16 @@ public class GetImages extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jComboBox1 = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
+        jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jPanel2.setBackground(new java.awt.Color(187, 248, 243));
         jPanel2.setForeground(new java.awt.Color(187, 248, 243));
@@ -75,15 +92,70 @@ public class GetImages extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 526, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(10, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane1.setViewportView(jList1);
+
+        jPanel1.setBackground(new java.awt.Color(187, 248, 243));
+        jPanel1.setForeground(new java.awt.Color(187, 248, 243));
+
+        jButton1.setText("Proximo");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Anterior");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Excluir");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(31, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(34, 34, 34)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -92,25 +164,89 @@ public class GetImages extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane1)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+
+        if (currentIndex < images.size() - 1) {
+            currentIndex++;
+        } else {
+            currentIndex = 0; // volta ao início
+        }
+
+        jList1.setSelectedIndex(currentIndex);
+        showImageAtIndex(currentIndex);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+
+        if (currentIndex > 0) {
+            currentIndex--;
+        } else {
+            currentIndex = images.size() - 1; // vai pro final
+        }
+
+        jList1.setSelectedIndex(currentIndex);
+        showImageAtIndex(currentIndex);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void showImageAtIndex(int index) {
+        if (index < 0 || index >= images.size()) {
+            jLabel1.setIcon(null);
+            return;
+        }
+
+        ImageItem item = images.get(index);
+        try {
+            File imgFile = new File(item.getPath());
+            if (!imgFile.exists()) {
+                System.out.println("Arquivo não encontrado: " + item.getPath());
+                jLabel1.setIcon(null);
+                return;
+            }
+
+            BufferedImage img = ImageIO.read(imgFile);
+            jLabel1.setIcon(new ImageIcon(img.getScaledInstance(
+                    jLabel1.getWidth(), jLabel1.getHeight(), java.awt.Image.SCALE_SMOOTH
+            )));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -148,8 +284,13 @@ public class GetImages extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JList<String> jList1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

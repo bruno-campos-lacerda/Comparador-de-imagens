@@ -1,125 +1,151 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package ComparadorDeImagens.service;
 
 import ComparadorDeImagens.dao.ImagesDAO;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.net.http.*;
 import java.sql.Timestamp;
-import java.util.Base64;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.*;
+import org.json.*;
 
-/**
- * Classe responsável por consumir a API do INPE,
- * converter o campo datetime para Timestamp
- * e salvar as imagens PNG no banco de dados.
- *
- * @author Pedro
- */
 public class GetImages {
 
-    public static void main(String[] args) {
-        // URL da API do INPE
-        String apiUrl = "https://data.inpe.br/bdc/stac/v1/search?collections=LCC_L8_30_1M_STK_Cerrado-1&limit=10000";
+    private static final int MAX_PAGINAS = 500;
+    private static final int THREADS = 10;
+    private static final int MAX_IMAGENS = 10000;
+    private static final int RETRY = 3;
+    private static final String BASE_DIR = "images"; // pasta para salvar as imagens
 
-        // Cliente HTTP
+    public static void main(String[] args) throws InterruptedException {
         HttpClient client = HttpClient.newBuilder().build();
+        ImagesDAO dao = new ImagesDAO();
 
-        // Requisição GET para a API
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(apiUrl))
-                .header("Accept", "application/json")
-                .GET()
-                .build();
+        // cria pasta caso não exista
+        new File(BASE_DIR).mkdirs();
 
-        try {
-            // Envia a requisição e obtém a resposta JSON
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        ExecutorService executor = Executors.newFixedThreadPool(THREADS);
+        int totalSalvas = 0;
+        int pagina = 1;
+        String nextUrl = "https://data.inpe.br/bdc/stac/v1/search?collections=LCC_L8_30_1M_STK_Cerrado-1&limit=50";
 
-            // Converte a resposta em JSON
-            JSONObject jsonResponse = new JSONObject(response.body());
-            JSONArray features = jsonResponse.getJSONArray("features");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
-            System.out.println("🔍 Iniciando coleta de imagens... Total de itens: " + features.length());
+        while (nextUrl != null && pagina <= MAX_PAGINAS && totalSalvas < MAX_IMAGENS) {
+            System.out.println("\n🔎 Buscando página " + pagina + ": " + nextUrl);
 
-            // Percorre cada item retornado pela API
-            for (int j = 0; j < features.length(); j++) {
-                JSONObject feature = features.getJSONObject(j);
+            try {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(nextUrl))
+                        .header("Accept", "application/json")
+                        .GET()
+                        .build();
 
-                // Obtém o campo "datetime"
-                JSONObject dateProperties = feature.optJSONObject("properties");
-                if (dateProperties == null) continue;
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                JSONObject jsonResponse = new JSONObject(response.body());
 
-                String datetime = dateProperties.optString("datetime", null);
-                if (datetime == null) continue;
-
-                // Converte o datetime ISO 8601 → Timestamp (para salvar no banco)
-                Timestamp timestamp;
-                try {
-                    Instant instant = Instant.parse(datetime);
-                    LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-                    timestamp = Timestamp.valueOf(localDateTime);
-                } catch (Exception e) {
-                    System.out.println("❌ Erro ao converter datetime: " + datetime + " → " + e.getMessage());
-                    continue;
+                JSONArray features = jsonResponse.optJSONArray("features");
+                if (features == null || features.isEmpty()) {
+                    System.out.println("⚠️ Nenhuma feature nesta página.");
+                    break;
                 }
 
-                // Obtém os assets (imagens)
-                JSONObject assets = feature.optJSONObject("assets");
-                if (assets == null) continue;
+                for (int j = 0; j < features.length(); j++) {
+                    if (totalSalvas >= MAX_IMAGENS) break;
 
-                // Percorre cada asset e busca o primeiro do tipo image/png
-                for (String key : assets.keySet()) {
-                    JSONObject asset = assets.getJSONObject(key);
-                    String href = asset.optString("href", null);
-                    String type = asset.optString("type", "sem tipo");
+                    JSONObject feature = features.getJSONObject(j);
+                    JSONObject props = feature.optJSONObject("properties");
+                    if (props == null) continue;
 
-                    if (href == null || !type.equals("image/png")) continue;
+                    String datetime = props.optString("datetime", null);
+                    if (datetime == null) continue;
 
+                    Timestamp timestamp;
+                    LocalDateTime ldt;
                     try {
-                        // Faz o download da imagem em bytes
-                        HttpRequest imgRequest = HttpRequest.newBuilder()
-                                .uri(URI.create(href))
-                                .build();
-                        HttpResponse<byte[]> imgResponse = client.send(imgRequest, HttpResponse.BodyHandlers.ofByteArray());
-                        byte[] imageBytes = imgResponse.body();
+                        Instant instant = Instant.parse(datetime);
+                        ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+                        timestamp = Timestamp.valueOf(ldt);
+                    } catch (Exception e) {
+                        continue;
+                    }
 
-                        // (Opcional) gera uma prévia em Base64 para log
-                        String image64Preview = Base64.getEncoder().encodeToString(imageBytes);
-                        if (image64Preview.length() > 200) {
-                            image64Preview = image64Preview.substring(0, 200) + "...";
+                    JSONObject assets = feature.optJSONObject("assets");
+                    if (assets == null) continue;
+
+                    for (String key : assets.keySet()) {
+                        JSONObject asset = assets.getJSONObject(key);
+                        String href = asset.optString("href", null);
+                        String type = asset.optString("type", "");
+                        if (href == null || !type.equals("image/png")) continue;
+
+                        // Evita duplicatas
+                        if (dao.existsImageByDatetime(timestamp) || dao.existsImageByHref(href)) {
+                            System.out.println("⏩ Já existe: " + timestamp + " | " + href);
+                            continue;
                         }
 
-                        // Salva no banco de dados
-                        ImagesDAO dao = new ImagesDAO();
-                        dao.InsertImages(timestamp, imageBytes);
+                        // Define nome do arquivo
+                        String filename = BASE_DIR + "/" + ldt.format(formatter) + "_" + key + ".png";
 
-                        System.out.println("✅ Imagem salva (" + timestamp + ") - Tamanho: " + imageBytes.length + " bytes");
-                        break; // salva apenas uma imagem PNG por feature
+                        executor.submit(() -> {
+                            int attempts = 0;
+                            while (attempts < RETRY) {
+                                try {
+                                    HttpRequest imgReq = HttpRequest.newBuilder().uri(URI.create(href)).build();
+                                    HttpResponse<byte[]> imgResp = client.send(imgReq, HttpResponse.BodyHandlers.ofByteArray());
+                                    byte[] imageBytes = imgResp.body();
 
-                    } catch (Exception e) {
-                        System.out.println("⚠️ Erro ao baixar/salvar imagem: " + e.getMessage());
+                                    // Salva no disco
+                                    try (FileOutputStream fos = new FileOutputStream(filename)) {
+                                        fos.write(imageBytes);
+                                    }
+
+                                    // Salva referência no banco
+                                    dao.InsertImagePath(timestamp, filename, href);
+                                    System.out.println("✅ Salvo: " + filename);
+                                    break;
+                                } catch (Exception e) {
+                                    attempts++;
+                                    System.out.println("⚠️ Falha (" + attempts + "): " + href);
+                                    try { Thread.sleep(1000); } catch (InterruptedException ie) { }
+                                }
+                            }
+                        });
+
+                        totalSalvas++;
+                        break; // pega só 1 imagem por feature
                     }
                 }
+
+                // Próxima página
+                nextUrl = null;
+                JSONArray links = jsonResponse.optJSONArray("links");
+                if (links != null) {
+                    for (int i = 0; i < links.length(); i++) {
+                        JSONObject link = links.getJSONObject(i);
+                        if ("next".equals(link.optString("rel"))) {
+                            nextUrl = link.optString("href", null);
+                            break;
+                        }
+                    }
+                }
+
+                pagina++;
+                Thread.sleep(1500);
+
+            } catch (IOException | InterruptedException | JSONException e) {
+                System.out.println("Erro na página: " + e.getMessage());
+                break;
             }
-
-            System.out.println("\n Processo concluído com sucesso!");
-
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Erro de conexão: " + e.getMessage());
-        } catch (JSONException je) {
-            System.out.println("Erro ao processar JSON: " + je.getMessage());
         }
+
+        executor.shutdown();
+        executor.awaitTermination(2, TimeUnit.HOURS);
+
+        System.out.println("\n🚀 Processo concluído. Total de imagens salvas: " + totalSalvas);
     }
 }
