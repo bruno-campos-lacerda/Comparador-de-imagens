@@ -74,7 +74,7 @@ public class ImagesDAO {
      */
     public List<ImageItem> getAllImages() {
         List<ImageItem> images = new ArrayList<>();
-        String sql = "SELECT _datetime, image FROM images ORDER BY _datetime ASC";
+        String sql = "SELECT _datetime, images FROM images ORDER BY _datetime ASC";
 
         try (Connection conn = ConnectionDAO.getImageConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -82,7 +82,7 @@ public class ImagesDAO {
 
             while (rs.next()) {
                 Timestamp ts = rs.getTimestamp("_datetime");
-                byte[] image = rs.getBytes("image");
+                byte[] image = rs.getBytes("images");
                 images.add(new ImageItem(ts, image));
             }
 
