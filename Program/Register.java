@@ -189,7 +189,7 @@ public class Register extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
         // Cria objetos necessários
-        LoginUserDAO dao = new LoginUserDAO();
+        LoginUserDAO dao = new LoginUserDAO();  
         LoginUser login = new LoginUser();
 
         // Captura os valores dos campos da tela

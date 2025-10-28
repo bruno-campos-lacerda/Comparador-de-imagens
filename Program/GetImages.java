@@ -34,7 +34,7 @@ public class GetImages extends javax.swing.JFrame {
         listModel.clear();
 
         for (ImageItem item : images) {
-            listModel.addElement(item.getTimestamp().toString());
+            listModel.addElement(item.getImage().toString());
         }
     }
 
