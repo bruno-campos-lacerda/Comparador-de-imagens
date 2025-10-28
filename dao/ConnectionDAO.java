@@ -21,23 +21,11 @@ public class ConnectionDAO {
 
     // Método de conexão loggin
     public static Connection getLogginConnection() {
-//        try {
-//            Class.forName(DRIVER);
-//            return DriverManager.getConnection(URLLoggin, USER, PASS);
-//        } catch (ClassNotFoundException | SQLException ex) {
-//            throw new RuntimeException("Erro na conexão: ", ex);
-//        }
         return getConnection(URL);
     }
     
     // Método de conexão image
     public static Connection getImageConnection() {
-//        try {
-//            Class.forName(DRIVER);
-//            return DriverManager.getConnection(URLImage, USER, PASS);
-//        } catch (ClassNotFoundException | SQLException ex) {
-//            throw new RuntimeException("Erro na conexão: ", ex);
-//        }
         return getConnection(URL);
     }
     
