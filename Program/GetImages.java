@@ -9,6 +9,7 @@ import ComparadorDeImagens.dao.ImagesDAO.ImageItem;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -247,8 +248,60 @@ public class GetImages extends javax.swing.JFrame {
     }//GEN-LAST:event_AnteriorActionPerformed
 
     private void ExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExcluirActionPerformed
-        // TODO add your handling code here:
+        if (images == null || images.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Não há imagens para excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
+        int idx = jList1.getSelectedIndex();
+        if (idx < 0 || idx >= images.size()) {
+            JOptionPane.showMessageDialog(this, "Nenhuma imagem selecionada.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        ImageItem item = images.get(idx);
+        //Date dateTime = item.getDatatime();
+        Timestamp dateTime = item.getDatatime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formatted = (dateTime != null) ? sdf.format(dateTime) : "desconhecido";
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Tem certeza que deseja excluir a imagem de " + formatted + "?",
+                "Confirmar exclusão",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (confirm != JOptionPane.YES_OPTION) {
+            return; // usuário cancelou
+        }
+
+        ImagesDAO dao = new ImagesDAO();
+        try {
+            // Chama o método deleta do DAO passando o datetime da imagem selecionada.
+            // Observação: o método DeletImage pode retornar void ou boolean. Aqui assumimos que
+            // ele lança exceção em caso de erro. Se o seu DAO retornar boolean, ajuste conforme necessário.
+            dao.DeletImage(dateTime);
+
+            // Atualiza a lista em memória e o JList
+            images.remove(idx);
+            listModel.remove(idx);
+
+            if (!images.isEmpty()) {
+                currentIndex = Math.min(idx, images.size() - 1);
+                jList1.setSelectedIndex(currentIndex);
+                showImageAtIndex(currentIndex);
+            } else {
+                currentIndex = -1;
+                jLabel1.setIcon(null);
+            }
+
+            JOptionPane.showMessageDialog(this, "Imagem excluída com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao excluir a imagem: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_ExcluirActionPerformed
 
     private void InserctionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InserctionActionPerformed
