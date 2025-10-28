@@ -9,6 +9,7 @@ import ComparadorDeImagens.dao.ImagesDAO.ImageItem;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 import javax.imageio.ImageIO;
 
@@ -45,9 +46,14 @@ public class GetImages extends javax.swing.JFrame {
                 if (index >= 0 && index < images.size()) {
                     ImageItem item = images.get(index);
                     try {
-                        File imgFile = new File(item.getPath());
+                        //File imgFile = new File(item.getImage());
+//                        try (FileOutputStream fos = new FileOutputStream("imagem_recuperada.jpg")) {
+//                            fos.write(imageBytes);
+//                        }
+                        FileOutputStream imgFile = new FileOutputStream("");
+                        imgFile.write(item.getImage());
                         if (!imgFile.exists()) {
-                            System.out.println("Arquivo não encontrado: " + item.getPath());
+                            System.out.println("Arquivo não encontrado: ");
                             jLabel1.setIcon(null);
                             return;
                         }
