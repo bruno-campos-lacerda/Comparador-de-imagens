@@ -9,7 +9,6 @@ import ComparadorDeImagens.dao.ImagesDAO.ImageItem;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -73,9 +72,12 @@ public class GetImages extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        Proximo = new javax.swing.JButton();
+        Anterior = new javax.swing.JButton();
+        Excluir = new javax.swing.JButton();
+        Inserction = new javax.swing.JButton();
+        Bubble = new javax.swing.JButton();
+        Quick = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -99,34 +101,50 @@ public class GetImages extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane1.setViewportView(jList1);
 
         jPanel1.setBackground(new java.awt.Color(187, 248, 243));
         jPanel1.setForeground(new java.awt.Color(187, 248, 243));
 
-        jButton1.setText("Proximo");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        Proximo.setText("Proximo");
+        Proximo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                ProximoActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Anterior");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        Anterior.setText("Anterior");
+        Anterior.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                AnteriorActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Excluir");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        Excluir.setText("Excluir");
+        Excluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                ExcluirActionPerformed(evt);
+            }
+        });
+
+        Inserction.setText("Inserction");
+        Inserction.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                InserctionActionPerformed(evt);
+            }
+        });
+
+        Bubble.setText("Bubble");
+        Bubble.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BubbleActionPerformed(evt);
+            }
+        });
+
+        Quick.setText("Quick");
+        Quick.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                QuickActionPerformed(evt);
             }
         });
 
@@ -136,22 +154,35 @@ public class GetImages extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(Inserction, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(Bubble, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(Quick, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(Proximo, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(Anterior, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(Excluir, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(31, Short.MAX_VALUE))
+                    .addComponent(Anterior, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Excluir, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Proximo, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Quick, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Bubble, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Inserction, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -183,7 +214,7 @@ public class GetImages extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void ProximoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProximoActionPerformed
         // TODO add your handling code here:
         if (images == null || images.isEmpty()) {
             return;
@@ -197,9 +228,9 @@ public class GetImages extends javax.swing.JFrame {
 
         jList1.setSelectedIndex(currentIndex);
         showImageAtIndex(currentIndex);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_ProximoActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void AnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AnteriorActionPerformed
         // TODO add your handling code here:
         if (images == null || images.isEmpty()) {
             return;
@@ -213,13 +244,96 @@ public class GetImages extends javax.swing.JFrame {
 
         jList1.setSelectedIndex(currentIndex);
         showImageAtIndex(currentIndex);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_AnteriorActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void ExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExcluirActionPerformed
         // TODO add your handling code here:
 
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_ExcluirActionPerformed
 
+    private void InserctionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InserctionActionPerformed
+        insertionSort(images); // ou directionSort(images)
+        JListUpdateData();
+    }//GEN-LAST:event_InserctionActionPerformed
+
+    private void BubbleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BubbleActionPerformed
+        bubbleSort(images);
+        JListUpdateData();
+    }//GEN-LAST:event_BubbleActionPerformed
+
+    private void QuickActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuickActionPerformed
+        quickSort(images, 0, images.size() - 1);
+        JListUpdateData();
+    }//GEN-LAST:event_QuickActionPerformed
+
+    private void JListUpdateData(){
+        listModel.clear();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (ImageItem item : images) {
+            listModel.addElement(sdf.format(item.getDatatime()));
+        }
+
+        if (!images.isEmpty()) {
+            currentIndex = 0;
+            jList1.setSelectedIndex(0);
+            showImageAtIndex(0);
+        }
+    }
+    
+    private void insertionSort(List<ImageItem> list) {
+        for (int i = 1; i < list.size(); i++) {
+            ImageItem key = list.get(i);
+            int j = i - 1;
+            while (j >= 0 && list.get(j).getDatatime().after(key.getDatatime())) {
+                list.set(j + 1, list.get(j));
+                j--;
+            }
+            list.set(j + 1, key);
+        }
+    }
+
+    private void bubbleSort(List<ImageItem> list) {
+        int n = list.size();
+        boolean swapped;
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < n - i - 1; j++) {
+                if (list.get(j).getDatatime().after(list.get(j + 1).getDatatime())) {
+                    ImageItem temp = list.get(j);
+                    list.set(j, list.get(j + 1));
+                    list.set(j + 1, temp);
+                    swapped = true;
+                }
+            }
+            if (!swapped) break;
+        }
+    }
+
+    private void quickSort(List<ImageItem> list, int low, int high) {
+        if (low < high) {
+            int pi = partition(list, low, high);
+            quickSort(list, low, pi - 1);
+            quickSort(list, pi + 1, high);
+        }
+    }
+
+    private int partition(List<ImageItem> list, int low, int high) {
+        ImageItem pivot = list.get(high);
+        int i = (low - 1);
+        for (int j = low; j < high; j++) {
+            if (list.get(j).getDatatime().before(pivot.getDatatime())) {
+                i++;
+                ImageItem temp = list.get(i);
+                list.set(i, list.get(j));
+                list.set(j, temp);
+            }
+        }
+        ImageItem temp = list.get(i + 1);
+        list.set(i + 1, list.get(high));
+        list.set(high, temp);
+        return i + 1;
+}
+    
     private void showImageAtIndex(int index) {
         if (index < 0 || index >= images.size()) {
             jLabel1.setIcon(null);
@@ -290,9 +404,12 @@ public class GetImages extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton Anterior;
+    private javax.swing.JButton Bubble;
+    private javax.swing.JButton Excluir;
+    private javax.swing.JButton Inserction;
+    private javax.swing.JButton Proximo;
+    private javax.swing.JButton Quick;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
