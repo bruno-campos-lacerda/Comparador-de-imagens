@@ -252,20 +252,59 @@ public class GetImages extends javax.swing.JFrame {
     }//GEN-LAST:event_ExcluirActionPerformed
 
     private void InserctionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InserctionActionPerformed
-        insertionSort(images); // ou directionSort(images)
-        JListUpdateData();
+        if (images == null || images.isEmpty()) return;
+        ordenarComContagem("insertion");
     }//GEN-LAST:event_InserctionActionPerformed
 
     private void BubbleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BubbleActionPerformed
-        bubbleSort(images);
-        JListUpdateData();
+        if (images == null || images.isEmpty()) return;
+        ordenarComContagem("bubble");
     }//GEN-LAST:event_BubbleActionPerformed
 
     private void QuickActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuickActionPerformed
-        quickSort(images, 0, images.size() - 1);
-        JListUpdateData();
+        if (images == null || images.isEmpty()) return;
+        ordenarComContagem("quick");
     }//GEN-LAST:event_QuickActionPerformed
 
+    
+    private void ordenarComContagem(String metodo) {
+        new Thread(() -> {
+            boolean rodando = true;
+            long oldTime = System.nanoTime();
+            long tempoInicial = oldTime;
+            double tempoTotal = 0;
+            double deltaTime;
+            double segundos = 0;
+
+            SwingUtilities.invokeLater(() -> setTitle("Ordenando com " + metodo + "..."));
+
+            switch (metodo) {
+                case "insertion":
+                    insertionSort(images);
+                    break;
+                case "bubble":
+                    bubbleSort(images);
+                    break;
+                case "quick":
+                    quickSort(images, 0, images.size() - 1);
+                    break;
+            }
+
+            long tempoFinal = System.nanoTime();
+            rodando = false;
+
+            tempoTotal = (tempoFinal - tempoInicial) / 1000000000.0;
+
+            final double tempo = tempoTotal;
+            SwingUtilities.invokeLater(() -> {
+                JListUpdateData();
+                setTitle("Ordenado com " + metodo + " em " + String.format("%.6f", tempo) + "s");
+            });
+        }).start();
+    }
+
+    
+    
     private void JListUpdateData(){
         listModel.clear();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -332,7 +371,7 @@ public class GetImages extends javax.swing.JFrame {
         list.set(i + 1, list.get(high));
         list.set(high, temp);
         return i + 1;
-}
+    }
     
     private void showImageAtIndex(int index) {
         if (index < 0 || index >= images.size()) {
