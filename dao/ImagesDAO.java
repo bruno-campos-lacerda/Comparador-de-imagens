@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ImagesDAO {
 
-    /**
+    /*
      * Insere uma imagem no banco com caminho no disco.
      *
      * @param dateTime Timestamp da imagem
@@ -28,6 +28,7 @@ public class ImagesDAO {
             System.err.println("❌ Erro ao salvar imagem: " + e.getMessage());
         }
     }
+
 
     public List<ImageItem> getAllImages() {
         List<ImageItem> images = new ArrayList<>();
@@ -47,6 +48,7 @@ public class ImagesDAO {
 
         return images;
     }
+
 
     public static class ImageItem {
 
