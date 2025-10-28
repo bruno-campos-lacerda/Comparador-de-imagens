@@ -188,43 +188,50 @@ public class Register extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-       // Cria objetos necessários
-    LoginUserDAO dao = new LoginUserDAO();
-    LoginUser login = new LoginUser();
+        // Cria objetos necessários
+        LoginUserDAO dao = new LoginUserDAO();  
+        LoginUser login = new LoginUser();
 
-    // Captura os valores dos campos da tela
-    String usuario = jTextField1.getText();
-    char[] senhaArray = jPasswordField1.getPassword();
-    String senha = new String(senhaArray); // converte char[] para String, se necessário
+        // Captura os valores dos campos da tela
+        String usuario = jTextField1.getText();
+        char[] senhaArray = jPasswordField1.getPassword();
+        String senha = new String(senhaArray); // converte char[] para String, se necessário
 
-    // Define no model
-    login.setUsername(usuario);
-    login.setPassword(senha);
-    
-  
-    if(dao.login(usuario,senha) == true){
-        JOptionPane.showMessageDialog(null, "Seja bem vindo!");
-    }else{
-        JOptionPane.showMessageDialog(null, "Usuario Invalido!");
-    }
-       
-    
+        // Define no model
+        login.setUsername(usuario);
+        login.setPassword(senha);
+
+        if (dao.login(usuario, senha) == true) {
+            JOptionPane.showMessageDialog(null, "Seja bem vindo!");
+
+            GetImages img = new GetImages();
+            img.setVisible(true);
+            this.dispose();
+
+        }if (usuario.isEmpty() || senha.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Preencha todos os campos!", "Atenção", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if(dao.login(usuario, senha) == false) {
+            JOptionPane.showMessageDialog(null, "Usuario Invalido!");
+        }
+
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed
-        
+
     }//GEN-LAST:event_jPasswordField1ActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-      
-        
-       if (jCheckBox1.isSelected()) {
-        jPasswordField1.setEchoChar((char) 0);
-    } else {
-        jPasswordField1.setEchoChar('*');
-    }
-        
+
+        if (jCheckBox1.isSelected()) {
+            jPasswordField1.setEchoChar((char) 0);
+        } else {
+            jPasswordField1.setEchoChar('*');
+        }
+
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

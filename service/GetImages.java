@@ -107,7 +107,7 @@ public class GetImages {
 
                         // Aqui você salva no banco (como antes)
                         ImagesDAO dao = new ImagesDAO();
-                        dao.InsertImages(timestamp, imageBytes);
+                        dao.InsertImagePath(timestamp, imageBytes);
 
                         // Apenas imprime (sem banco)
                         System.out.println("✅ Imagem coletada (" + timestamp + ") - " + imageBytes.length + " bytes");

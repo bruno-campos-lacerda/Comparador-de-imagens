@@ -8,35 +8,21 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Classe DAO responsável por salvar e buscar imagens no banco de dados.
- * A tabela esperada é:
- * 
- * CREATE TABLE images (
- *     id INT AUTO_INCREMENT PRIMARY KEY,
- *     _datetime DATETIME NOT NULL,
- *     imagem LONGBLOB NOT NULL
- * );
- * 
- * @author Pedro
- */
 public class ImagesDAO {
 
     /**
-     * Insere uma imagem com data/hora no banco de dados.
-     * @param dateTime Timestamp com data e hora da imagem
-     * @param imageBytes bytes da imagem (PNG)
+     * Insere uma imagem no banco com caminho no disco.
+     * @param dateTime Timestamp da imagem
+     *
      */
-    public void InsertImages(Timestamp dateTime, byte[] imageBytes) {
-        String sql = "INSERT INTO images (_datetime, imagem) VALUES (?, ?)";
-        try (Connection connection = ConnectionDAO.getImageConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
+    public void InsertImagePath(Timestamp dateTime, byte [] image) {
+        String sql = "INSERT INTO images (_datetime, images) VALUES (?, ?)";
+        try (Connection conn = ConnectionDAO.getImageConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setTimestamp(1, dateTime);
-            stmt.setBytes(2, imageBytes);
+            stmt.setBytes(2, image);
             stmt.executeUpdate();
-
-            System.out.println("✅ Imagem salva com sucesso no banco!");
 
         } catch (SQLException e) {
             System.err.println("❌ Erro ao salvar imagem: " + e.getMessage());
@@ -44,52 +30,51 @@ public class ImagesDAO {
     }
 
     /**
-     * Verifica se existe uma imagem com a data/hora informada.
-     * @param dateTime Timestamp da imagem a buscar
-     * @return true se existir, false caso contrário
+     * Verifica se já existe uma imagem com determinado href.
      */
-    public boolean GetImages(Timestamp dateTime) {
-        String sql = "SELECT 1 FROM images WHERE _datetime = ?";
-        try (Connection connection = ConnectionDAO.getImageConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
-
-            stmt.setTimestamp(1, dateTime);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next();
-
-        } catch (SQLException e) {
-            System.out.println("Erro ao obter imagem: " + e.getMessage());
-            return false;
-        }
-    }
+//    public boolean existsImageByHref(String datetime) {
+//        String sql = "SELECT COUNT(*) FROM images WHERE _datetime = ?";
+//        try (Connection conn = ConnectionDAO.getImageConnection();
+//             PreparedStatement stmt = conn.prepareStatement(sql)) {
+//
+//            stmt.setString(1, datetime);
+//            ResultSet rs = stmt.executeQuery();
+//            if (rs.next()) {
+//                return rs.getInt(1) > 0;
+//            }
+//
+//        } catch (SQLException e) {
+//            System.out.println("Erro ao verificar href: " + e.getMessage());
+//        }
+//        return false;
+//    }
 
     /**
-     * Classe estática para representar imagens com timestamp
-     */
-    public static class ImageItem {
-        private Timestamp timestamp;
-        private byte[] imageBytes;
-
-        public ImageItem(Timestamp timestamp, byte[] imageBytes) {
-            this.timestamp = timestamp;
-            this.imageBytes = imageBytes;
-        }
-
-        public Timestamp getTimestamp() {
-            return timestamp;
-        }
-
-        public byte[] getImageBytes() {
-            return imageBytes;
-        }
-    }
+     * Verifica se já existe uma imagem com determinado timestamp.
+//     */
+//    public boolean existsImageByDatetime(Timestamp timestamp) {
+//        String sql = "SELECT COUNT(*) FROM images WHERE _datetime = ?";
+//        try (Connection conn = ConnectionDAO.getImageConnection();
+//             PreparedStatement stmt = conn.prepareStatement(sql)) {
+//
+//            stmt.setTimestamp(1, timestamp);
+//            ResultSet rs = stmt.executeQuery();
+//            if (rs.next()) {
+//                return rs.getInt(1) > 0;
+//            }
+//
+//        } catch (SQLException e) {
+//            System.out.println("Erro ao verificar datetime: " + e.getMessage());
+//        }
+//        return false;
+//    }
 
     /**
-     * Retorna todas as imagens do banco em ordem crescente de data
+     * Retorna todas as imagens do banco, em ordem crescente de data.
      */
     public List<ImageItem> getAllImages() {
         List<ImageItem> images = new ArrayList<>();
-        String sql = "SELECT _datetime, imagem FROM images ORDER BY _datetime ASC";
+        String sql = "SELECT _datetime, image FROM images ORDER BY _datetime ASC";
 
         try (Connection conn = ConnectionDAO.getImageConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -97,8 +82,8 @@ public class ImagesDAO {
 
             while (rs.next()) {
                 Timestamp ts = rs.getTimestamp("_datetime");
-                byte[] bytes = rs.getBytes("imagem");
-                images.add(new ImageItem(ts, bytes));
+                byte[] image = rs.getBytes("image");
+                images.add(new ImageItem(ts, image));
             }
 
         } catch (SQLException e) {
@@ -106,5 +91,36 @@ public class ImagesDAO {
         }
 
         return images;
+    }
+
+    /**
+     * Classe auxiliar para representar uma imagem com timestamp e caminho.
+     */
+    public static class ImageItem {
+        private Timestamp datatime;
+        private byte [] image;
+
+        public ImageItem(Timestamp datatime, byte[] image) {
+            this.datatime = datatime;
+            this.image = image;
+        }
+
+        public Timestamp getDatatime() {
+            return datatime;
+        }
+
+        public void setDatatime(Timestamp datatime) {
+            this.datatime = datatime;
+        }
+
+        public byte[] getImage() {
+            return image;
+        }
+
+        public void setImage(byte[] image) {
+            this.image = image;
+        }
+
+        
     }
 }
