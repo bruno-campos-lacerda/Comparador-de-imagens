@@ -28,13 +28,33 @@ public class ImagesDAO {
             System.err.println("❌ Erro ao salvar imagem: " + e.getMessage());
         }
     }
+    
+    /*
+     * Made by Bruno Campos
+     * Delete images from database
+     */
+    public void DeletImage(Timestamp dateTime){
+        //String sql = "SELECT _datetime, images FROM images ORDER BY _datetime ASC";
+        //String sql = "DELETE FROM images WHERE _datetime = '?'";
+        String sql = """
+                     DELETE FROM images WHERE ctid IN (SELECT ctid FROM images WHERE _datetime = ? LIMIT 1);
+                     """;
+        try(Connection conn = ConnectionDAO.getImageConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setTimestamp(1, dateTime);
+            stmt.executeUpdate();
+        }catch(SQLException e){
+            System.err.println("❌ Erro ao apagar imagem: " + e.getMessage());
+        }
+    }
 
     /*
      * Retorna todas as imagens do banco, em ordem crescente de data.
      */
     public List<ImageItem> getAllImages() {
         List<ImageItem> images = new ArrayList<>();
-        String sql = "SELECT _datetime, images FROM images ORDER BY _datetime ASC";
+        //String sql = "SELECT _datetime, images FROM images ORDER BY _datetime ASC";
+        String sql = "SELECT _datetime, images FROM images;";
 
         try (Connection conn = ConnectionDAO.getImageConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
