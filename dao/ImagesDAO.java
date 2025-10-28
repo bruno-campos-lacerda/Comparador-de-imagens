@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ImagesDAO {
 
-    /**
+    /*
      * Insere uma imagem no banco com caminho no disco.
      * @param dateTime Timestamp da imagem
      *
@@ -29,47 +29,7 @@ public class ImagesDAO {
         }
     }
 
-    /**
-     * Verifica se já existe uma imagem com determinado href.
-     */
-//    public boolean existsImageByHref(String datetime) {
-//        String sql = "SELECT COUNT(*) FROM images WHERE _datetime = ?";
-//        try (Connection conn = ConnectionDAO.getImageConnection();
-//             PreparedStatement stmt = conn.prepareStatement(sql)) {
-//
-//            stmt.setString(1, datetime);
-//            ResultSet rs = stmt.executeQuery();
-//            if (rs.next()) {
-//                return rs.getInt(1) > 0;
-//            }
-//
-//        } catch (SQLException e) {
-//            System.out.println("Erro ao verificar href: " + e.getMessage());
-//        }
-//        return false;
-//    }
-
-    /**
-     * Verifica se já existe uma imagem com determinado timestamp.
-//     */
-//    public boolean existsImageByDatetime(Timestamp timestamp) {
-//        String sql = "SELECT COUNT(*) FROM images WHERE _datetime = ?";
-//        try (Connection conn = ConnectionDAO.getImageConnection();
-//             PreparedStatement stmt = conn.prepareStatement(sql)) {
-//
-//            stmt.setTimestamp(1, timestamp);
-//            ResultSet rs = stmt.executeQuery();
-//            if (rs.next()) {
-//                return rs.getInt(1) > 0;
-//            }
-//
-//        } catch (SQLException e) {
-//            System.out.println("Erro ao verificar datetime: " + e.getMessage());
-//        }
-//        return false;
-//    }
-
-    /**
+    /*
      * Retorna todas as imagens do banco, em ordem crescente de data.
      */
     public List<ImageItem> getAllImages() {
@@ -93,7 +53,7 @@ public class ImagesDAO {
         return images;
     }
 
-    /**
+    /*
      * Classe auxiliar para representar uma imagem com timestamp e caminho.
      */
     public static class ImageItem {
