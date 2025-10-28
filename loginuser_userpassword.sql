@@ -29,7 +29,7 @@ CREATE TABLE `userpassword` (
   `registration_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`idUserPassword`),
   UNIQUE KEY `User_UNIQUE` (`User`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +38,7 @@ CREATE TABLE `userpassword` (
 
 LOCK TABLES `userpassword` WRITE;
 /*!40000 ALTER TABLE `userpassword` DISABLE KEYS */;
-INSERT INTO `userpassword` VALUES (1,'root','root','2025-09-27 15:45:41'),(2,'brunao','brubrulalausandocalcinha123','2025-10-11 23:09:35'),(3,'gabi','666','2025-10-11 23:23:42');
+INSERT INTO `userpassword` VALUES (1,'root','root','2025-09-27 15:45:41'),(2,'brunao','brubrulalausandocalcinha123','2025-10-11 23:09:35'),(3,'gabi','666','2025-10-11 23:23:42'),(4,'Pedro','Omaisgostosodobrasil','2025-10-28 02:09:52');
 /*!40000 ALTER TABLE `userpassword` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-11 21:33:59
+-- Dump completed on 2025-10-27 23:14:17

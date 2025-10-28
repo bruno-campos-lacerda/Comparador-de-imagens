@@ -4,7 +4,6 @@ package ComparadorDeImagens.service;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 import ComparadorDeImagens.dao.ImagesDAO;
 import java.io.IOException;
 import java.net.URI;
@@ -20,17 +19,10 @@ import java.time.ZoneId;
 import java.sql.Timestamp;
 import java.util.Base64;
 
-/*
- * Classe responsavel por consumir a API do INPE,
- * converter o campo datetime para Timestamp
- * e salvar as imagens PNG no banco de dados.
- *
- * @author Pedro
- */
 public class GetImages {
 
     public static void main(String[] args) {
-        
+
         // URL da API da Earth Search (AWS Element84)
         String apiUrl = "https://earth-search.aws.element84.com/v1/search?"
                 + "collections=sentinel-2-l2a"
@@ -55,19 +47,23 @@ public class GetImages {
             JSONObject jsonResponse = new JSONObject(response.body());
             JSONArray features = jsonResponse.getJSONArray("features");
 
-            System.out.println("🔍 Iniciando coleta de imagens... Total de itens: " + features.length());
+            System.out.println("Iniciando coleta de imagens... Total de itens: " + features.length());
 
-            for(int i = 0; i < 150; i++){
+            for (int i = 0; i < 150; i++) {
                 // Percorre os resultados (limitando só para evitar sobrecarga)
                 for (int j = 0; j < features.length(); j++) {
                     JSONObject feature = features.getJSONObject(j);
 
                     // Obtém o campo "datetime"
                     JSONObject dateProperties = feature.optJSONObject("properties");
-                    if (dateProperties == null) continue;
+                    if (dateProperties == null) {
+                        continue;
+                    }
 
                     String datetime = dateProperties.optString("datetime", null);
-                    if (datetime == null) continue;
+                    if (datetime == null) {
+                        continue;
+                    }
 
                     // Converte o datetime ISO 8601 → Timestamp
                     Timestamp timestamp;
@@ -76,20 +72,26 @@ public class GetImages {
                         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
                         timestamp = Timestamp.valueOf(localDateTime);
                     } catch (Exception e) {
-                        System.out.println("❌ Erro ao converter datetime: " + datetime + " → " + e.getMessage());
+                        System.out.println("Erro ao converter datetime: " + datetime + " → " + e.getMessage());
                         continue;
                     }
 
                     // Obtém os assets (imagens)
                     JSONObject assets = feature.optJSONObject("assets");
-                    if (assets == null) continue;
+                    if (assets == null) {
+                        continue;
+                    }
 
                     // Busca o campo "thumbnail" (único JPEG disponível)
                     JSONObject thumb = assets.optJSONObject("thumbnail");
-                    if (thumb == null) continue;
+                    if (thumb == null) {
+                        continue;
+                    }
 
                     String href = thumb.optString("href", null);
-                    if (href == null || !href.endsWith(".jpg")) continue;
+                    if (href == null || !href.endsWith(".jpg")) {
+                        continue;
+                    }
 
                     try {
                         // Faz o download da imagem em bytes
@@ -110,8 +112,8 @@ public class GetImages {
                         dao.InsertImagePath(timestamp, imageBytes);
 
                         // Apenas imprime (sem banco)
-                        System.out.println("✅ Imagem coletada (" + timestamp + ") - " + imageBytes.length + " bytes");
-                        System.out.println("📸 Link: " + href);
+                        System.out.println("Imagem coletada (" + timestamp + ") - " + imageBytes.length + " bytes");
+                        System.out.println("Link: " + href);
                         System.out.println();
 
                     } catch (Exception e) {
@@ -119,8 +121,8 @@ public class GetImages {
                     }
                 }
             }
-            
-            System.out.println("\n✅ Processo concluído com sucesso!");
+
+            System.out.println("\n Processo concluído com sucesso!");
 
         } catch (IOException | InterruptedException e) {
             System.out.println("Erro de conexão: " + e.getMessage());
@@ -128,102 +130,5 @@ public class GetImages {
             System.out.println("Erro ao processar JSON: " + je.getMessage());
         }
 
-        
-        
-//        // URL da API do INPE
-//        String apiUrl = "https://data.inpe.br/bdc/stac/v1/search?collections=LCC_L8_30_1M_STK_Cerrado-1&limit=10000";
-//
-//        // Cliente HTTP
-//        HttpClient client = HttpClient.newBuilder().build();
-//
-//        // Requisição GET para a API
-//        HttpRequest request = HttpRequest.newBuilder()
-//                .uri(URI.create(apiUrl))
-//                .header("Accept", "application/json")
-//                .GET()
-//                .build();
-//
-//        try {
-//            // Envia a requisição e obtém a resposta JSON
-//            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//
-//            // Converte a resposta em JSON
-//            JSONObject jsonResponse = new JSONObject(response.body());
-//            JSONArray features = jsonResponse.getJSONArray("features");
-//
-//            System.out.println("🔍 Iniciando coleta de imagens... Total de itens: " + features.length());
-//
-//            
-//            for(int i = 0; i < 10000; i++){
-//                // Percorre cada item retornado pela API
-//                for (int j = 0; j < features.length(); j++) {
-//                    JSONObject feature = features.getJSONObject(j);
-//
-//                    // Obtém o campo "datetime"
-//                    JSONObject dateProperties = feature.optJSONObject("properties");
-//                    if (dateProperties == null) continue;
-//
-//                    String datetime = dateProperties.optString("datetime", null);
-//                    if (datetime == null) continue;
-//
-//                    // Converte o datetime ISO 8601 → Timestamp (para salvar no banco)
-//                    Timestamp timestamp;
-//                    try {
-//                        Instant instant = Instant.parse(datetime);
-//                        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-//                        timestamp = Timestamp.valueOf(localDateTime);
-//                    } catch (Exception e) {
-//                        System.out.println("❌ Erro ao converter datetime: " + datetime + " → " + e.getMessage());
-//                        continue;
-//                    }
-//
-//                    // Obtém os assets (imagens)
-//                    JSONObject assets = feature.optJSONObject("assets");
-//                    if (assets == null) continue;
-//
-//                    // Percorre cada asset e busca o primeiro do tipo image/png
-//                    for (String key : assets.keySet()) {
-//                        JSONObject asset = assets.getJSONObject(key);
-//                        String href = asset.optString("href", null);
-//                        String type = asset.optString("type", "sem tipo");
-//
-//                        if (href == null || !type.equals("image/png")) continue;
-//
-//                        try {
-//                            // Faz o download da imagem em bytes
-//                            HttpRequest imgRequest = HttpRequest.newBuilder()
-//                                    .uri(URI.create(href))
-//                                    .build();
-//                            HttpResponse<byte[]> imgResponse = client.send(imgRequest, HttpResponse.BodyHandlers.ofByteArray());
-//                            byte[] imageBytes = imgResponse.body();
-//
-//                            // (Opcional) gera uma prévia em Base64 para log
-//                            String image64Preview = Base64.getEncoder().encodeToString(imageBytes);
-//                            if (image64Preview.length() > 200) {
-//                                image64Preview = image64Preview.substring(0, 200) + "...";
-//                            }
-//
-//                            // Salva no banco de dados
-//                            ImagesDAO dao = new ImagesDAO();
-//                            dao.InsertImages(timestamp, imageBytes);
-//
-//                            System.out.println("✅ Imagem salva (" + timestamp + ") - Tamanho: " + imageBytes.length + " bytes");
-//                            break; // salva apenas uma imagem PNG por feature
-//
-//                        } catch (Exception e) {
-//                            System.out.println("⚠️ Erro ao baixar/salvar imagem: " + e.getMessage());
-//                        }
-//                    }
-//                }
-//            }
-//            
-//
-//            System.out.println("\n Processo concluído com sucesso!");
-//
-//        } catch (IOException | InterruptedException e) {
-//            System.out.println("Erro de conexão: " + e.getMessage());
-//        } catch (JSONException je) {
-//            System.out.println("Erro ao processar JSON: " + je.getMessage());
-//        }
     }
 }
