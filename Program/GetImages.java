@@ -8,7 +8,9 @@ import ComparadorDeImagens.dao.ImagesDAO;
 import ComparadorDeImagens.dao.ImagesDAO.ImageItem;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.imageio.ImageIO;
 
@@ -33,8 +35,15 @@ public class GetImages extends javax.swing.JFrame {
         jList1.setModel(listModel);
         listModel.clear();
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (ImageItem item : images) {
-            listModel.addElement(item.getImage().toString());
+            listModel.addElement(sdf.format(item.getDatatime()));
+        }
+
+        if (!images.isEmpty()) {
+            currentIndex = 0;
+            jList1.setSelectedIndex(0);
+            showImageAtIndex(0);
         }
     }
 
@@ -43,21 +52,8 @@ public class GetImages extends javax.swing.JFrame {
             if (!e.getValueIsAdjusting()) {
                 int index = jList1.getSelectedIndex();
                 if (index >= 0 && index < images.size()) {
-                    ImageItem item = images.get(index);
-                    try {
-                        File imgFile = new File(item.getPath());
-                        if (!imgFile.exists()) {
-                            System.out.println("Arquivo não encontrado: " + item.getPath());
-                            jLabel1.setIcon(null);
-                            return;
-                        }
-                        BufferedImage img = ImageIO.read(imgFile);
-                        jLabel1.setIcon(new ImageIcon(img.getScaledInstance(
-                                jLabel1.getWidth(), jLabel1.getHeight(), java.awt.Image.SCALE_SMOOTH
-                        )));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+                    currentIndex = index;
+                    showImageAtIndex(index);
                 }
             }
         });
@@ -221,7 +217,7 @@ public class GetImages extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void showImageAtIndex(int index) {
@@ -232,19 +228,29 @@ public class GetImages extends javax.swing.JFrame {
 
         ImageItem item = images.get(index);
         try {
-            File imgFile = new File(item.getPath());
-            if (!imgFile.exists()) {
-                System.out.println("Arquivo não encontrado: " + item.getPath());
+            byte[] imgBytes = item.getImage();
+            if (imgBytes == null || imgBytes.length == 0) {
                 jLabel1.setIcon(null);
+                System.out.println("Imagem vazia no índice: " + index);
                 return;
             }
 
-            BufferedImage img = ImageIO.read(imgFile);
-            jLabel1.setIcon(new ImageIcon(img.getScaledInstance(
-                    jLabel1.getWidth(), jLabel1.getHeight(), java.awt.Image.SCALE_SMOOTH
-            )));
+            BufferedImage img = ImageIO.read(new ByteArrayInputStream(imgBytes));
+            if (img != null) {
+                jLabel1.setIcon(new ImageIcon(
+                        img.getScaledInstance(
+                                jLabel1.getWidth(),
+                                jLabel1.getHeight(),
+                                java.awt.Image.SCALE_SMOOTH
+                        )
+                ));
+            } else {
+                jLabel1.setIcon(null);
+            }
+
         } catch (Exception ex) {
             ex.printStackTrace();
+            jLabel1.setIcon(null);
         }
     }
 
