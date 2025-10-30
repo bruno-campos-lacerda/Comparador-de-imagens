@@ -5,7 +5,7 @@
 package ComparadorDeImagens.Program;
 
 import ComparadorDeImagens.dao.ImagesDAO;
-import ComparadorDeImagens.dao.ImagesDAO.ImageItem;
+import ComparadorDeImagens.dao.ImagesDAO.ImageData;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -16,7 +16,7 @@ import javax.imageio.ImageIO;
 
 public class GetImages extends javax.swing.JFrame {
 
-    private List<ImageItem> images;
+    private List<ImageData> dateTimeImage;
     private DefaultListModel<String> listModel;
     private int currentIndex = -1;
 
@@ -29,18 +29,18 @@ public class GetImages extends javax.swing.JFrame {
 
     private void loadImagesFromDB() {
         ImagesDAO dao = new ImagesDAO();
-        images = dao.getAllImages();
+        dateTimeImage = dao.getAllImagesDateTimes();
 
         listModel = new DefaultListModel<>();
         jList1.setModel(listModel);
         listModel.clear();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for (ImageItem item : images) {
-            listModel.addElement(sdf.format(item.getDatatime()));
+        for (ImageData item : dateTimeImage) {
+            listModel.addElement(sdf.format(item.getDateTime()));
         }
 
-        if (!images.isEmpty()) {
+        if (!dateTimeImage.isEmpty()) {
             currentIndex = 0;
             jList1.setSelectedIndex(0);
             showImageAtIndex(0);
@@ -51,7 +51,7 @@ public class GetImages extends javax.swing.JFrame {
         jList1.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int index = jList1.getSelectedIndex();
-                if (index >= 0 && index < images.size()) {
+                if (index >= 0 && index < dateTimeImage.size()) {
                     currentIndex = index;
                     showImageAtIndex(index);
                 }
@@ -217,11 +217,11 @@ public class GetImages extends javax.swing.JFrame {
 
     private void ProximoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProximoActionPerformed
         // TODO add your handling code here:
-        if (images == null || images.isEmpty()) {
+        if (dateTimeImage == null || dateTimeImage.isEmpty()) {
             return;
         }
 
-        if (currentIndex < images.size() - 1) {
+        if (currentIndex < dateTimeImage.size() - 1) {
             currentIndex++;
         } else {
             currentIndex = 0; // volta ao início
@@ -233,14 +233,14 @@ public class GetImages extends javax.swing.JFrame {
 
     private void AnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AnteriorActionPerformed
         // TODO add your handling code here:
-        if (images == null || images.isEmpty()) {
+        if (dateTimeImage == null || dateTimeImage.isEmpty()) {
             return;
         }
 
         if (currentIndex > 0) {
             currentIndex--;
         } else {
-            currentIndex = images.size() - 1; // vai pro final
+            currentIndex = dateTimeImage.size() - 1; // vai pro final
         }
 
         jList1.setSelectedIndex(currentIndex);
@@ -248,20 +248,20 @@ public class GetImages extends javax.swing.JFrame {
     }//GEN-LAST:event_AnteriorActionPerformed
 
     private void ExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExcluirActionPerformed
-        if (images == null || images.isEmpty()) {
+        if (dateTimeImage == null || dateTimeImage.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Não há imagens para excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         int idx = jList1.getSelectedIndex();
-        if (idx < 0 || idx >= images.size()) {
+        if (idx < 0 || idx >= dateTimeImage.size()) {
             JOptionPane.showMessageDialog(this, "Nenhuma imagem selecionada.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        ImageItem item = images.get(idx);
-        //Date dateTime = item.getDatatime();
-        Timestamp dateTime = item.getDatatime();
+        ImageData item = dateTimeImage.get(idx);
+        Timestamp dateTime = item.getDateTime();
+        int id = item.getId();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String formatted = (dateTime != null) ? sdf.format(dateTime) : "desconhecido";
 
@@ -282,14 +282,15 @@ public class GetImages extends javax.swing.JFrame {
             // Chama o método deleta do DAO passando o datetime da imagem selecionada.
             // Observação: o método DeletImage pode retornar void ou boolean. Aqui assumimos que
             // ele lança exceção em caso de erro. Se o seu DAO retornar boolean, ajuste conforme necessário.
-            dao.DeletImage(dateTime);
-
+            //dao.DeletImage(dateTime);
+            dao.DeletImage(id); 
+            
             // Atualiza a lista em memória e o JList
-            images.remove(idx);
+            dateTimeImage.remove(idx);
             listModel.remove(idx);
 
-            if (!images.isEmpty()) {
-                currentIndex = Math.min(idx, images.size() - 1);
+            if (!dateTimeImage.isEmpty()) {
+                currentIndex = Math.min(idx, dateTimeImage.size() - 1);
                 jList1.setSelectedIndex(currentIndex);
                 showImageAtIndex(currentIndex);
             } else {
@@ -305,17 +306,17 @@ public class GetImages extends javax.swing.JFrame {
     }//GEN-LAST:event_ExcluirActionPerformed
 
     private void InserctionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InserctionActionPerformed
-        if (images == null || images.isEmpty()) return;
+        if (dateTimeImage == null || dateTimeImage.isEmpty()) return;
         ordenarComContagem("insertion");
     }//GEN-LAST:event_InserctionActionPerformed
 
     private void BubbleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BubbleActionPerformed
-        if (images == null || images.isEmpty()) return;
+        if (dateTimeImage == null || dateTimeImage.isEmpty()) return;
         ordenarComContagem("bubble");
     }//GEN-LAST:event_BubbleActionPerformed
 
     private void QuickActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuickActionPerformed
-        if (images == null || images.isEmpty()) return;
+        if (dateTimeImage == null || dateTimeImage.isEmpty()) return;
         ordenarComContagem("quick");
     }//GEN-LAST:event_QuickActionPerformed
 
@@ -333,13 +334,13 @@ public class GetImages extends javax.swing.JFrame {
 
             switch (metodo) {
                 case "insertion":
-                    insertionSort(images);
+                    insertionSort(dateTimeImage);
                     break;
                 case "bubble":
-                    bubbleSort(images);
+                    bubbleSort(dateTimeImage);
                     break;
                 case "quick":
-                    quickSort(images, 0, images.size() - 1);
+                    quickSort(dateTimeImage, 0, dateTimeImage.size() - 1);
                     break;
             }
 
@@ -361,22 +362,22 @@ public class GetImages extends javax.swing.JFrame {
     private void JListUpdateData(){
         listModel.clear();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for (ImageItem item : images) {
-            listModel.addElement(sdf.format(item.getDatatime()));
+        for (ImageData item : dateTimeImage) {
+            listModel.addElement(sdf.format(item.getDateTime()));
         }
 
-        if (!images.isEmpty()) {
+        if (!dateTimeImage.isEmpty()) {
             currentIndex = 0;
             jList1.setSelectedIndex(0);
             showImageAtIndex(0);
         }
     }
     
-    private void insertionSort(List<ImageItem> list) {
+    private void insertionSort(List<ImageData> list) {
         for (int i = 1; i < list.size(); i++) {
-            ImageItem key = list.get(i);
+            ImageData key = list.get(i);
             int j = i - 1;
-            while (j >= 0 && list.get(j).getDatatime().after(key.getDatatime())) {
+            while (j >= 0 && list.get(j).getDateTime().after(key.getDateTime())) {
                 list.set(j + 1, list.get(j));
                 j--;
             }
@@ -384,14 +385,14 @@ public class GetImages extends javax.swing.JFrame {
         }
     }
 
-    private void bubbleSort(List<ImageItem> list) {
+    private void bubbleSort(List<ImageData> list) {
         int n = list.size();
         boolean swapped;
         for (int i = 0; i < n - 1; i++) {
             swapped = false;
             for (int j = 0; j < n - i - 1; j++) {
-                if (list.get(j).getDatatime().after(list.get(j + 1).getDatatime())) {
-                    ImageItem temp = list.get(j);
+                if (list.get(j).getDateTime().after(list.get(j + 1).getDateTime())) {
+                    ImageData temp = list.get(j);
                     list.set(j, list.get(j + 1));
                     list.set(j + 1, temp);
                     swapped = true;
@@ -401,7 +402,7 @@ public class GetImages extends javax.swing.JFrame {
         }
     }
 
-    private void quickSort(List<ImageItem> list, int low, int high) {
+    private void quickSort(List<ImageData> list, int low, int high) {
         if (low < high) {
             int pi = partition(list, low, high);
             quickSort(list, low, pi - 1);
@@ -409,42 +410,43 @@ public class GetImages extends javax.swing.JFrame {
         }
     }
 
-    private int partition(List<ImageItem> list, int low, int high) {
-        ImageItem pivot = list.get(high);
+    private int partition(List<ImageData> list, int low, int high) {
+        ImageData pivot = list.get(high);
         int i = (low - 1);
         for (int j = low; j < high; j++) {
-            if (list.get(j).getDatatime().before(pivot.getDatatime())) {
+            if (list.get(j).getDateTime().before(pivot.getDateTime())) {
                 i++;
-                ImageItem temp = list.get(i);
+                ImageData temp = list.get(i);
                 list.set(i, list.get(j));
                 list.set(j, temp);
             }
         }
-        ImageItem temp = list.get(i + 1);
+        ImageData temp = list.get(i + 1);
         list.set(i + 1, list.get(high));
         list.set(high, temp);
         return i + 1;
     }
     
     private void showImageAtIndex(int index) {
-        if (index < 0 || index >= images.size()) {
+        if (index < 0 || index >= dateTimeImage.size()) {
             jLabel1.setIcon(null);
             return;
         }
 
-        ImageItem item = images.get(index);
+        Timestamp item = dateTimeImage.get(index).getDateTime();
+        ImagesDAO img = new ImagesDAO();
         try {
-            byte[] imgBytes = item.getImage();
+            byte[] imgBytes = img.getImage(item);
             if (imgBytes == null || imgBytes.length == 0) {
                 jLabel1.setIcon(null);
                 System.out.println("Imagem vazia no índice: " + index);
                 return;
             }
 
-            BufferedImage img = ImageIO.read(new ByteArrayInputStream(imgBytes));
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(imgBytes));
             if (img != null) {
                 jLabel1.setIcon(new ImageIcon(
-                        img.getScaledInstance(
+                        image.getScaledInstance(
                                 jLabel1.getWidth(),
                                 jLabel1.getHeight(),
                                 java.awt.Image.SCALE_SMOOTH
