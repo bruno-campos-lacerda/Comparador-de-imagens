@@ -282,7 +282,6 @@ public class GetImages extends javax.swing.JFrame {
             // Chama o método deleta do DAO passando o datetime da imagem selecionada.
             // Observação: o método DeletImage pode retornar void ou boolean. Aqui assumimos que
             // ele lança exceção em caso de erro. Se o seu DAO retornar boolean, ajuste conforme necessário.
-            //dao.DeletImage(dateTime);
             dao.DeletImage(id); 
             
             // Atualiza a lista em memória e o JList
@@ -432,7 +431,6 @@ public class GetImages extends javax.swing.JFrame {
             jLabel1.setIcon(null);
             return;
         }
-
         Timestamp item = dateTimeImage.get(index).getDateTime();
         ImagesDAO img = new ImagesDAO();
         try {
@@ -442,20 +440,18 @@ public class GetImages extends javax.swing.JFrame {
                 System.out.println("Imagem vazia no índice: " + index);
                 return;
             }
-
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(imgBytes));
             if (img != null) {
                 jLabel1.setIcon(new ImageIcon(
-                        image.getScaledInstance(
-                                jLabel1.getWidth(),
-                                jLabel1.getHeight(),
-                                java.awt.Image.SCALE_SMOOTH
-                        )
+                    image.getScaledInstance(
+                        jLabel1.getWidth(),
+                        jLabel1.getHeight(),
+                        java.awt.Image.SCALE_SMOOTH
+                    )
                 ));
             } else {
                 jLabel1.setIcon(null);
             }
-
         } catch (Exception ex) {
             ex.printStackTrace();
             jLabel1.setIcon(null);

@@ -13,11 +13,13 @@ public class ConnectionDAO {
     // Dados da conexão
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver"; // use o driver atualizado
     
+    //private static final String URL = "jdbc:mysql://localhost:3306/loginuser?useSSL=false&serverTimezone=UTC";
     private static final String URL = "jdbc:mysql://localhost:3306/loginuser?useSSL=false&serverTimezone=UTC";
-    //private static final String URLImage = "jdbc:mysql://localhost:3306/images?useSSL=false&serverTimezone=UTC";
+    //private static final String URL = "jdbc:mysql://localhost:3306/loginuser?zeroDateTimeBehavior=CONVERT_TO_NULL";
     
     private static final String USER = "root";
-    private static final String PASS = "1618f17LLP*";
+    private static final String PASS = "2131";
+    //private static final String PASS = "1618f17LLP*";
 
     // Método de conexão loggin
     public static Connection getLogginConnection() {
