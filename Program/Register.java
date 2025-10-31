@@ -216,8 +216,6 @@ public class Register extends javax.swing.JFrame {
         if(dao.login(usuario, senha) == false) {
             JOptionPane.showMessageDialog(null, "Usuario Invalido!");
         }
-
-
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed

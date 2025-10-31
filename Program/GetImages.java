@@ -5,18 +5,19 @@
 package ComparadorDeImagens.Program;
 
 import ComparadorDeImagens.dao.ImagesDAO;
-import ComparadorDeImagens.dao.ImagesDAO.ImageItem;
+import ComparadorDeImagens.dao.ImagesDAO.ImageData;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.imageio.ImageIO;
 
 public class GetImages extends javax.swing.JFrame {
 
-    private List<ImageItem> images;
+    private List<ImageData> dateTimeImage;
     private DefaultListModel<String> listModel;
     private int currentIndex = -1;
 
@@ -29,18 +30,18 @@ public class GetImages extends javax.swing.JFrame {
 
     private void loadImagesFromDB() {
         ImagesDAO dao = new ImagesDAO();
-        images = dao.getAllImages();
+        dateTimeImage = dao.getAllImagesDateTimes();
 
         listModel = new DefaultListModel<>();
         jList1.setModel(listModel);
         listModel.clear();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for (ImageItem item : images) {
-            listModel.addElement(sdf.format(item.getDatatime()));
+        for (ImageData item : dateTimeImage) {
+            listModel.addElement(sdf.format(item.getDateTime()));
         }
 
-        if (!images.isEmpty()) {
+        if (!dateTimeImage.isEmpty()) {
             currentIndex = 0;
             jList1.setSelectedIndex(0);
             showImageAtIndex(0);
@@ -51,7 +52,7 @@ public class GetImages extends javax.swing.JFrame {
         jList1.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int index = jList1.getSelectedIndex();
-                if (index >= 0 && index < images.size()) {
+                if (index >= 0 && index < dateTimeImage.size()) {
                     currentIndex = index;
                     showImageAtIndex(index);
                 }
@@ -79,11 +80,22 @@ public class GetImages extends javax.swing.JFrame {
         Inserction = new javax.swing.JButton();
         Bubble = new javax.swing.JButton();
         Quick = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        LId = new javax.swing.JLabel();
+        LDateTime = new javax.swing.JLabel();
+        LLenght = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        LOrdeningTime = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel2.setBackground(new java.awt.Color(187, 248, 243));
         jPanel2.setForeground(new java.awt.Color(187, 248, 243));
+
+        jLabel1.setBackground(new java.awt.Color(187, 248, 243));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -186,17 +198,107 @@ public class GetImages extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jPanel3.setBackground(new java.awt.Color(187, 248, 243));
+        jPanel3.setForeground(new java.awt.Color(51, 51, 51));
+
+        jLabel2.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel2.setText("             [ id ] ->");
+
+        jLabel3.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel3.setText("[ date time ] ->");
+
+        jLabel4.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel4.setText("     [ lenght ] ->");
+
+        LId.setForeground(new java.awt.Color(51, 51, 51));
+        LId.setText("id");
+
+        LDateTime.setForeground(new java.awt.Color(51, 51, 51));
+        LDateTime.setText("dateTime");
+
+        LLenght.setForeground(new java.awt.Color(51, 51, 51));
+        LLenght.setText("lenght");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(LId))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(LDateTime))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(LLenght)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(LId))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(LDateTime))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(LLenght))
+                .addContainerGap(22, Short.MAX_VALUE))
+        );
+
+        jPanel4.setBackground(new java.awt.Color(187, 248, 243));
+
+        LOrdeningTime.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        LOrdeningTime.setForeground(new java.awt.Color(51, 51, 51));
+        LOrdeningTime.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LOrdeningTime.setText("0.00s");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(LOrdeningTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(LOrdeningTime, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -209,6 +311,10 @@ public class GetImages extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -217,11 +323,11 @@ public class GetImages extends javax.swing.JFrame {
 
     private void ProximoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProximoActionPerformed
         // TODO add your handling code here:
-        if (images == null || images.isEmpty()) {
+        if (dateTimeImage == null || dateTimeImage.isEmpty()) {
             return;
         }
 
-        if (currentIndex < images.size() - 1) {
+        if (currentIndex < dateTimeImage.size() - 1) {
             currentIndex++;
         } else {
             currentIndex = 0; // volta ao início
@@ -233,14 +339,14 @@ public class GetImages extends javax.swing.JFrame {
 
     private void AnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AnteriorActionPerformed
         // TODO add your handling code here:
-        if (images == null || images.isEmpty()) {
+        if (dateTimeImage == null || dateTimeImage.isEmpty()) {
             return;
         }
 
         if (currentIndex > 0) {
             currentIndex--;
         } else {
-            currentIndex = images.size() - 1; // vai pro final
+            currentIndex = dateTimeImage.size() - 1; // vai pro final
         }
 
         jList1.setSelectedIndex(currentIndex);
@@ -248,20 +354,20 @@ public class GetImages extends javax.swing.JFrame {
     }//GEN-LAST:event_AnteriorActionPerformed
 
     private void ExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExcluirActionPerformed
-        if (images == null || images.isEmpty()) {
+        if (dateTimeImage == null || dateTimeImage.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Não há imagens para excluir.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         int idx = jList1.getSelectedIndex();
-        if (idx < 0 || idx >= images.size()) {
+        if (idx < 0 || idx >= dateTimeImage.size()) {
             JOptionPane.showMessageDialog(this, "Nenhuma imagem selecionada.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        ImageItem item = images.get(idx);
-        //Date dateTime = item.getDatatime();
-        Timestamp dateTime = item.getDatatime();
+        ImageData item = dateTimeImage.get(idx);
+        Timestamp dateTime = item.getDateTime();
+        int id = item.getId();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String formatted = (dateTime != null) ? sdf.format(dateTime) : "desconhecido";
 
@@ -282,14 +388,14 @@ public class GetImages extends javax.swing.JFrame {
             // Chama o método deleta do DAO passando o datetime da imagem selecionada.
             // Observação: o método DeletImage pode retornar void ou boolean. Aqui assumimos que
             // ele lança exceção em caso de erro. Se o seu DAO retornar boolean, ajuste conforme necessário.
-            dao.DeletImage(dateTime);
-
+            dao.DeletImage(id); 
+            
             // Atualiza a lista em memória e o JList
-            images.remove(idx);
+            dateTimeImage.remove(idx);
             listModel.remove(idx);
 
-            if (!images.isEmpty()) {
-                currentIndex = Math.min(idx, images.size() - 1);
+            if (!dateTimeImage.isEmpty()) {
+                currentIndex = Math.min(idx, dateTimeImage.size() - 1);
                 jList1.setSelectedIndex(currentIndex);
                 showImageAtIndex(currentIndex);
             } else {
@@ -305,53 +411,55 @@ public class GetImages extends javax.swing.JFrame {
     }//GEN-LAST:event_ExcluirActionPerformed
 
     private void InserctionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InserctionActionPerformed
-        if (images == null || images.isEmpty()) return;
+        if (dateTimeImage == null || dateTimeImage.isEmpty()) return;
         ordenarComContagem("insertion");
     }//GEN-LAST:event_InserctionActionPerformed
 
     private void BubbleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BubbleActionPerformed
-        if (images == null || images.isEmpty()) return;
+        if (dateTimeImage == null || dateTimeImage.isEmpty()) return;
         ordenarComContagem("bubble");
     }//GEN-LAST:event_BubbleActionPerformed
 
     private void QuickActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuickActionPerformed
-        if (images == null || images.isEmpty()) return;
+        if (dateTimeImage == null || dateTimeImage.isEmpty()) return;
         ordenarComContagem("quick");
     }//GEN-LAST:event_QuickActionPerformed
 
     
     private void ordenarComContagem(String metodo) {
         new Thread(() -> {
-            boolean rodando = true;
             long oldTime = System.nanoTime();
+            boolean rodando = true;
             long tempoInicial = oldTime;
             double tempoTotal = 0;
             double deltaTime;
             double segundos = 0;
 
-            SwingUtilities.invokeLater(() -> setTitle("Ordenando com " + metodo + "..."));
+            //SwingUtilities.invokeLater(() -> setTitle("Ordenando com " + metodo + "..."));
+            SwingUtilities.invokeLater(() -> LOrdeningTime.setText("Ordenando com " + metodo + "..."));
 
             switch (metodo) {
                 case "insertion":
-                    insertionSort(images);
+                    insertionSort(dateTimeImage);
                     break;
                 case "bubble":
-                    bubbleSort(images);
+                    bubbleSort(dateTimeImage);
                     break;
                 case "quick":
-                    quickSort(images, 0, images.size() - 1);
+                    quickSort(dateTimeImage, 0, dateTimeImage.size() - 1);
                     break;
             }
 
-            long tempoFinal = System.nanoTime();
             rodando = false;
+            long tempoFinal = System.nanoTime();
 
-            tempoTotal = (tempoFinal - tempoInicial) / 1000000000.0;
+            tempoTotal = (tempoFinal - tempoInicial) / 1000000.0;
 
             final double tempo = tempoTotal;
             SwingUtilities.invokeLater(() -> {
                 JListUpdateData();
-                setTitle("Ordenado com " + metodo + " em " + String.format("%.6f", tempo) + "s");
+                LOrdeningTime.setText("Ordenado com " + metodo + " em " + String.format("%.4f", tempo) + "s");
+                //setTitle("Ordenado com " + metodo + " em " + String.format("%.6f", tempo) + "s");
             });
         }).start();
     }
@@ -361,22 +469,22 @@ public class GetImages extends javax.swing.JFrame {
     private void JListUpdateData(){
         listModel.clear();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for (ImageItem item : images) {
-            listModel.addElement(sdf.format(item.getDatatime()));
+        for (ImageData item : dateTimeImage) {
+            listModel.addElement(sdf.format(item.getDateTime()));
         }
 
-        if (!images.isEmpty()) {
+        if (!dateTimeImage.isEmpty()) {
             currentIndex = 0;
             jList1.setSelectedIndex(0);
             showImageAtIndex(0);
         }
     }
     
-    private void insertionSort(List<ImageItem> list) {
+    private void insertionSort(List<ImageData> list) {
         for (int i = 1; i < list.size(); i++) {
-            ImageItem key = list.get(i);
+            ImageData key = list.get(i);
             int j = i - 1;
-            while (j >= 0 && list.get(j).getDatatime().after(key.getDatatime())) {
+            while (j >= 0 && list.get(j).getDateTime().after(key.getDateTime())) {
                 list.set(j + 1, list.get(j));
                 j--;
             }
@@ -384,14 +492,14 @@ public class GetImages extends javax.swing.JFrame {
         }
     }
 
-    private void bubbleSort(List<ImageItem> list) {
+    private void bubbleSort(List<ImageData> list) {
         int n = list.size();
         boolean swapped;
         for (int i = 0; i < n - 1; i++) {
             swapped = false;
             for (int j = 0; j < n - i - 1; j++) {
-                if (list.get(j).getDatatime().after(list.get(j + 1).getDatatime())) {
-                    ImageItem temp = list.get(j);
+                if (list.get(j).getDateTime().after(list.get(j + 1).getDateTime())) {
+                    ImageData temp = list.get(j);
                     list.set(j, list.get(j + 1));
                     list.set(j + 1, temp);
                     swapped = true;
@@ -401,7 +509,7 @@ public class GetImages extends javax.swing.JFrame {
         }
     }
 
-    private void quickSort(List<ImageItem> list, int low, int high) {
+    private void quickSort(List<ImageData> list, int low, int high) {
         if (low < high) {
             int pi = partition(list, low, high);
             quickSort(list, low, pi - 1);
@@ -409,55 +517,62 @@ public class GetImages extends javax.swing.JFrame {
         }
     }
 
-    private int partition(List<ImageItem> list, int low, int high) {
-        ImageItem pivot = list.get(high);
+    private int partition(List<ImageData> list, int low, int high) {
+        ImageData pivot = list.get(high);
         int i = (low - 1);
         for (int j = low; j < high; j++) {
-            if (list.get(j).getDatatime().before(pivot.getDatatime())) {
+            if (list.get(j).getDateTime().before(pivot.getDateTime())) {
                 i++;
-                ImageItem temp = list.get(i);
+                ImageData temp = list.get(i);
                 list.set(i, list.get(j));
                 list.set(j, temp);
             }
         }
-        ImageItem temp = list.get(i + 1);
+        ImageData temp = list.get(i + 1);
         list.set(i + 1, list.get(high));
         list.set(high, temp);
         return i + 1;
     }
     
     private void showImageAtIndex(int index) {
-        if (index < 0 || index >= images.size()) {
+        if (index < 0 || index >= dateTimeImage.size()) {
             jLabel1.setIcon(null);
             return;
         }
-
-        ImageItem item = images.get(index);
+        ImageData imageData = dateTimeImage.get(index);
+        //Timestamp item = dateTimeImage.get(index).getDateTime();
+        Timestamp item = imageData.getDateTime();
+        ImagesDAO img = new ImagesDAO();
         try {
-            byte[] imgBytes = item.getImage();
+            byte[] imgBytes = img.getImage(item);
             if (imgBytes == null || imgBytes.length == 0) {
                 jLabel1.setIcon(null);
                 System.out.println("Imagem vazia no índice: " + index);
                 return;
             }
-
-            BufferedImage img = ImageIO.read(new ByteArrayInputStream(imgBytes));
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(imgBytes));
             if (img != null) {
                 jLabel1.setIcon(new ImageIcon(
-                        img.getScaledInstance(
-                                jLabel1.getWidth(),
-                                jLabel1.getHeight(),
-                                java.awt.Image.SCALE_SMOOTH
-                        )
+                    image.getScaledInstance(
+                        jLabel1.getWidth(),
+                        jLabel1.getHeight(),
+                        java.awt.Image.SCALE_SMOOTH
+                    )
                 ));
+                showImageDataInfo(imageData, imgBytes);
             } else {
                 jLabel1.setIcon(null);
             }
-
         } catch (Exception ex) {
             ex.printStackTrace();
             jLabel1.setIcon(null);
         }
+    }
+    
+    private void showImageDataInfo(ImageData imageData, byte[] image){
+        LId.setText(Integer.toString(imageData.getId()));
+        LDateTime.setText(imageData.getDateTime().toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+        LLenght.setText(Integer.toString(image.length));
     }
 
     /**
@@ -500,12 +615,21 @@ public class GetImages extends javax.swing.JFrame {
     private javax.swing.JButton Bubble;
     private javax.swing.JButton Excluir;
     private javax.swing.JButton Inserction;
+    private javax.swing.JLabel LDateTime;
+    private javax.swing.JLabel LId;
+    private javax.swing.JLabel LLenght;
+    private javax.swing.JLabel LOrdeningTime;
     private javax.swing.JButton Proximo;
     private javax.swing.JButton Quick;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
