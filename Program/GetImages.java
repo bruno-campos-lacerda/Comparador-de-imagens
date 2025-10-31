@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.imageio.ImageIO;
 
@@ -79,11 +80,22 @@ public class GetImages extends javax.swing.JFrame {
         Inserction = new javax.swing.JButton();
         Bubble = new javax.swing.JButton();
         Quick = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        LId = new javax.swing.JLabel();
+        LDateTime = new javax.swing.JLabel();
+        LLenght = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        LOrdeningTime = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel2.setBackground(new java.awt.Color(187, 248, 243));
         jPanel2.setForeground(new java.awt.Color(187, 248, 243));
+
+        jLabel1.setBackground(new java.awt.Color(187, 248, 243));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -186,17 +198,107 @@ public class GetImages extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jPanel3.setBackground(new java.awt.Color(187, 248, 243));
+        jPanel3.setForeground(new java.awt.Color(51, 51, 51));
+
+        jLabel2.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel2.setText("             [ id ] ->");
+
+        jLabel3.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel3.setText("[ date time ] ->");
+
+        jLabel4.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel4.setText("     [ lenght ] ->");
+
+        LId.setForeground(new java.awt.Color(51, 51, 51));
+        LId.setText("id");
+
+        LDateTime.setForeground(new java.awt.Color(51, 51, 51));
+        LDateTime.setText("dateTime");
+
+        LLenght.setForeground(new java.awt.Color(51, 51, 51));
+        LLenght.setText("lenght");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(LId))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(LDateTime))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(LLenght)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(LId))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(LDateTime))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(LLenght))
+                .addContainerGap(22, Short.MAX_VALUE))
+        );
+
+        jPanel4.setBackground(new java.awt.Color(187, 248, 243));
+
+        LOrdeningTime.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        LOrdeningTime.setForeground(new java.awt.Color(51, 51, 51));
+        LOrdeningTime.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LOrdeningTime.setText("0.00s");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(LOrdeningTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(LOrdeningTime, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -209,6 +311,10 @@ public class GetImages extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -322,14 +428,15 @@ public class GetImages extends javax.swing.JFrame {
     
     private void ordenarComContagem(String metodo) {
         new Thread(() -> {
-            boolean rodando = true;
             long oldTime = System.nanoTime();
+            boolean rodando = true;
             long tempoInicial = oldTime;
             double tempoTotal = 0;
             double deltaTime;
             double segundos = 0;
 
-            SwingUtilities.invokeLater(() -> setTitle("Ordenando com " + metodo + "..."));
+            //SwingUtilities.invokeLater(() -> setTitle("Ordenando com " + metodo + "..."));
+            SwingUtilities.invokeLater(() -> LOrdeningTime.setText("Ordenando com " + metodo + "..."));
 
             switch (metodo) {
                 case "insertion":
@@ -343,15 +450,16 @@ public class GetImages extends javax.swing.JFrame {
                     break;
             }
 
-            long tempoFinal = System.nanoTime();
             rodando = false;
+            long tempoFinal = System.nanoTime();
 
-            tempoTotal = (tempoFinal - tempoInicial) / 1000000000.0;
+            tempoTotal = (tempoFinal - tempoInicial) / 1000000.0;
 
             final double tempo = tempoTotal;
             SwingUtilities.invokeLater(() -> {
                 JListUpdateData();
-                setTitle("Ordenado com " + metodo + " em " + String.format("%.6f", tempo) + "s");
+                LOrdeningTime.setText("Ordenado com " + metodo + " em " + String.format("%.4f", tempo) + "s");
+                //setTitle("Ordenado com " + metodo + " em " + String.format("%.6f", tempo) + "s");
             });
         }).start();
     }
@@ -431,7 +539,9 @@ public class GetImages extends javax.swing.JFrame {
             jLabel1.setIcon(null);
             return;
         }
-        Timestamp item = dateTimeImage.get(index).getDateTime();
+        ImageData imageData = dateTimeImage.get(index);
+        //Timestamp item = dateTimeImage.get(index).getDateTime();
+        Timestamp item = imageData.getDateTime();
         ImagesDAO img = new ImagesDAO();
         try {
             byte[] imgBytes = img.getImage(item);
@@ -449,6 +559,7 @@ public class GetImages extends javax.swing.JFrame {
                         java.awt.Image.SCALE_SMOOTH
                     )
                 ));
+                showImageDataInfo(imageData, imgBytes);
             } else {
                 jLabel1.setIcon(null);
             }
@@ -456,6 +567,12 @@ public class GetImages extends javax.swing.JFrame {
             ex.printStackTrace();
             jLabel1.setIcon(null);
         }
+    }
+    
+    private void showImageDataInfo(ImageData imageData, byte[] image){
+        LId.setText(Integer.toString(imageData.getId()));
+        LDateTime.setText(imageData.getDateTime().toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+        LLenght.setText(Integer.toString(image.length));
     }
 
     /**
@@ -498,12 +615,21 @@ public class GetImages extends javax.swing.JFrame {
     private javax.swing.JButton Bubble;
     private javax.swing.JButton Excluir;
     private javax.swing.JButton Inserction;
+    private javax.swing.JLabel LDateTime;
+    private javax.swing.JLabel LId;
+    private javax.swing.JLabel LLenght;
+    private javax.swing.JLabel LOrdeningTime;
     private javax.swing.JButton Proximo;
     private javax.swing.JButton Quick;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
